@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang='fr'>
+  <head>
+    <meta charset='UTF-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ecovoit' - Moteur de recherche de covoiturages</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.1/css/datepicker3.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.css">
+    <style>
+      input[type=number] { width: 50px; }
+      input[type=text] { width: 250px; }
+      input:invalid { box-shadow: 0 0 5px #d45252; border-color: #b03535; }
+      tr:hover { cursor: pointer; }
+      .well { text-align:center; }
+      .alert { margin-bottom: 0; }
+      .navbar { margin-bottom: 0; margin-top: 15px; padding-left: 15px; }
+      .progress { margin-bottom: 0; }
+      table.table { border: 0; }
+      #logo { width: 420px; background-color: white; border-radius: 30px; margin-bottom: 15px; margin-right: 30px; margin-left: 30px; }
+      .remote-search-link { margin: 15px; }
+    </style>
+  </head>
+  <body role="document">
+    <script type="text/javascript" src="sugar-1.4.1_date_locale-fr.min.js"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script type="text/javascript" src="//cdn.rawgit.com/lodash/lodash/3.1.0/lodash.js" defer></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.min.js" defer></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js" defer></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.5.0/bootstrap-table.min.js" defer></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.1/js/bootstrap-datepicker.min.js" defer></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.1/js/locales/bootstrap-datepicker.fr.min.js" defer></script>
+    <script type="text/javascript" src="covoiturage-bundle.js" defer></script>
+    <div class="container" role="main">
+      <form role="search" method="get" class="navbar-form" onsubmit="return false">
+      <div class="well">
+        <a href="/ecovoit"><img id="logo" src="logo.png" alt="[Ecovoit logo image]" title="Logo réalisé par Laëtitia Beschus"></a>
+          <div class="form-group">
+            <span class="label label-default">Le</span>
+            <div class="input-group date" id="date-picker">
+              <input class="form-control" id="date-selected" pattern="\d{2}/\d{2}/\d{4}" required>
+              <span class="input-group-addon">
+                <i class="glyphicon glyphicon-th"></i>
+              </span>
+            </div>
+            <span class="label label-default">entre</span>
+            <input type="number" id="departure-hour-min" min=1 max=24 value=7 required>h
+            <span class="label label-default">et</span>
+            <input type="number" id="departure-hour-max" min=1 max=24 value=24 required>h
+            <br><br>
+            <span class="label label-default">de</span>
+            <input type="text" class="form-control" id="from-place" placeholder="Adresse de départ" required>
+            <span class="label label-default">à</span>
+            <input type="text" class="form-control" id="to-place" placeholder="Adresse d'arrivée" required>
+            <button type="submit" class="btn btn-default">Chercher</button>
+            <br><br>
+            <ul id="enabled-crawlers-list"></ul>
+          </div>
+        </div>
+      </form>
+      <div id="alert-messages"></div>
+    </div>
+    <div class="container" role="list" id="results-viewer"></div>
+    <script type="text/html" id="welcome-message">
+        Bienvenue sur <strong>Ecovoit'</strong>, le moteur de recherche de covoiturage !
+        <br>
+        Pour effectuer votre recherche, indiquez simplement une ville de départ et une ville d'arrivée, puis pressez "Chercher".
+    </script>
+    <script type="text/html" id="usage-message">
+        Cliquez sur les résultats pour accéder au détail de chaque annonce.
+        <br>
+        Cliquez sur le nom d'un colonne pour trier les résultats selon par ordre croissant ou décroissant.
+    </script>
+    <script type="text/html" id="alert-template">
+      <div class="alert {alert_type} alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <{html_tag}>
+          {message}
+        </{html_tag}>
+      </div>
+    </script>
+    <script type="text/html" id="error-msg-template">
+      <a data-toggle="collapse" aria-expanded="false"
+       href="#error-details-{id}" aria-controls="error-details-{id}">
+        <strong>Details</strong>
+      </a>
+      <div class="collapse" id="error-details-{id}">
+        <pre>
+          {details}
+        </pre>
+     </div>
+    </script>
+    <div class="hidden" id="crawler-results-template">
+      <div id="{TAG_NAME}-results">
+        <nav class="hidden navbar navbar-default">
+          <a class="navbar-brand" href="http://{WEBSITE_URL}">{DISPLAY_NAME} ({WEBSITE_URL})</a>
+          <span class="hidden remote-search-link pull-right"></span>
+        </nav>
+        <div id="{TAG_NAME}-progress-bar" class="hidden panel panel-default">
+          <div class="panel-body">
+            <div class="progress">
+              <div class="progress-bar progress-bar-success" role="progressbar"
+               aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                0%
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="{TAG_NAME}-results-table-pager" class="hidden panel panel-default">
+          <!-- Some divs will be inserted by bootstrap-table between the parent div and this table -->
+          <table id="{TAG_NAME}-results-table" class="table table-striped table-bordered" data-pagination="true">
+            <thead>
+              <tr>
+                <th class="col-xs-1" data-field="date" data-sortable="true">Date</th>
+                <th class="col-xs-1" data-field="departure_hour" data-sortable="true">Heure de départ</th>
+                <th class="col-xs-1" data-field="price" data-sortable="true">Prix</th>
+                <th class="col-xs-1" data-field="places" data-sortable="true">Places</th>
+                <th class="col-xs-2" data-field="driver">Conducteur</th>
+                <th class="col-xs-12" data-field="journey">Trajet</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+    <noscript><p><img src="//chezsoi.org/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+    <div id="map"></div>
+  </body>
+</html>
