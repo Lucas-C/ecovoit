@@ -1,2 +1,4 @@
-pep8==1.5.7
-pylint==1.4.0
+uwsgi==2.0.9
+pep8==1.6.1
+pylint==1.4.1
+piprot==0.9.0

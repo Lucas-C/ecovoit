@@ -65,7 +65,7 @@ exports = module.exports = _.extend({}, base_crawler, {
         }
         ajax_proxied({
             url: exports.AUTOCOMPLETE_URL + query_city_name,
-            dataType: 'JSON',
+            data_type: 'JSON',
             success: function (data) {
                 try {
                     var city_result = exports.parse_city_info(query_city_name, data);
@@ -108,7 +108,7 @@ exports = module.exports = _.extend({}, base_crawler, {
         },
         function query_search_website (cb_chain, query_params) {
             ajax_proxied({
-                type: 'POST',
+                method: 'POST',
                 url: exports.QUERY_BASE_URL,
                 data: query_params,
                 success: _.partial(cb_chain.next, query_params),

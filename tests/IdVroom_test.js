@@ -34,9 +34,7 @@ test('IdVroom_get_city_info_2_postal_codes', function (t) {
 
 test('IdVroom_get_city_info_nomatch', function (t) {
     t.plan(1);
-    IdVroomCrawler.get_city_info('Aéroport Lyon Saint Exupéry', 'departure', function (city_info) {
-        t.ok(city_info instanceof Error, 'No error raised for unknown place: ' + utils.pretty_string(city_info));
-    });
+    IdVroomCrawler.get_city_info('Aéroport Lyon Saint Exupéry', 'departure', t.fail.bind(t), t.pass.bind(t));
 });
 
 // Cf. http://fr.wikipedia.org/wiki/Cat%C3%A9gorie:Homonymie_de_communes_et_d%27anciennes_communes_fran%C3%A7aises

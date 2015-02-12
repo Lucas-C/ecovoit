@@ -15,9 +15,7 @@ test('VadrouilleCovoiturageCrawler_get_city_info', function (t) {
 
 test('VadrouilleCovoiturageCrawler_get_city_info_nomatch', function (t) {
     t.plan(1);
-    VadrouilleCovoiturageCrawler.get_city_info('XYZ', 'test', function (city_info) {
-        t.ok(city_info instanceof Error, 'Error raised for unknown place: ' + utils.pretty_string(city_info));
-    });
+    VadrouilleCovoiturageCrawler.get_city_info('XYZ', 'test', t.fail.bind(t), t.pass.bind(t));
 });
 
 test('VadrouilleCovoiturageCrawler_get_city_info_with_diacritic', function (t) {

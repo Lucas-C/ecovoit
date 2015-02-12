@@ -24,27 +24,14 @@
     "url": "http://github.com/Lucas-C/ecovoit"
   },
   "devDependencies": {
-    "browserify": "^6.3.3",
-    "tape": "~2.4.0",
-    "bootlint": "^0.8.0",
+    "browserify": "^8.1.3",
+    "tape": "^3.5.0",
+    "bootlint": "^0.10.0",
     "jshint": "^2.5.6",
     "jscs": "^1.7.3",
-    "madge": "^0.4.1"
-  },
-  "testling": {
-    "files": "tests/*.js",
-    "browsers": [
-      "ie/6..latest",
-      "chrome/22..latest",
-      "firefox/16..latest",
-      "safari/latest",
-      "opera/11.0..latest",
-      "iphone/6",
-      "ipad/6",
-      "android-browser/latest"
-    ]
+    "madge": "^0.4.1",
+    "david": "^6.1.4"
   },
   "scripts": {
-    "test": "tape tests/*.js"
   }
 }

@@ -31,7 +31,7 @@ exports = module.exports = _.extend({}, base_crawler, {
             ajax_proxied({
                 url: exports.QUERY_BASE_URL,
                 data: query_params,
-                dataType: 'JSON',
+                data_type: 'JSON',
                 success: _.partial(cb_chain.next, user_input, query_params),
                 failure: cb_chain.abort,
             });

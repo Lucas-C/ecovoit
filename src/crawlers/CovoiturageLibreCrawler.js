@@ -61,7 +61,7 @@ exports = module.exports = _.extend({}, base_crawler, {
         },
         function query_search_website (cb_chain, query_params) {
             ajax_proxied({
-                type: 'POST',
+                method: 'POST',
                 url: exports.QUERY_BASE_URL,
                 data: query_params,
                 mime_type: 'text/html; charset=iso-8859-1',

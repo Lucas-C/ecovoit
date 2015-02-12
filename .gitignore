@@ -1,6 +1,7 @@
+/__zuul
+/doc/dependencies_graph.*
+/*-tests.html
 /*.js
+/*.log*
+/vnu.jar
 *.pyc
-*.log*
-dependencies_graph.*
-index-tests.html
-vnu.jar

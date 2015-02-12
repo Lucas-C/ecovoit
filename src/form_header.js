@@ -56,6 +56,8 @@ exports = module.exports = {
             };
         });
 
+        from_input.focus();
+
         var enabled_crawlers_tagnames = cookies_mgr.get_json('enabled_crawlers_tagnames') || crawlers_list.available_crawlers_tagnames();
         exports.populate_crawlers_list(crawlers_list, enabled_crawlers_tagnames);
     },

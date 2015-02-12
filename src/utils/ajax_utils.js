@@ -22,17 +22,17 @@ var config = require('../config.js'),
 exports = module.exports = {
     ajax: function (settings) { // jshint maxcomplexity: 7
         var request = _.extend({
-            type: 'get',
+            method: 'get',
             full_url: settings.url,
             post_data: null,
             xhr: new XMLHttpRequest(),
         }, settings);
-        request.type = request.type.toUpperCase();
-        if (request.type === 'GET' && !_.isEmpty(request.data)) {
+        request.method = request.method.toUpperCase();
+        if (request.method === 'GET' && !_.isEmpty(request.data)) {
             request.full_url += '?' + encode_query_params(request.data, request.encoding_function);
         }
-        request.xhr.open(request.type, request.full_url, true); // async=true
-        if (request.type === 'POST') {
+        request.xhr.open(request.method, request.full_url, true); // async=true
+        if (request.method === 'POST') {
             // Do NOT set the 'Content-Type' header manually, so that the browser append the correct one:
             // 'application/x-www-form-urlencoded' or 'multipart/form-data; boundary='
             if (request.data && request.multipart) {
@@ -63,7 +63,7 @@ exports = module.exports = {
                 throw_ajax_error(request, 'AJAX request event');
                 return;
             }
-            if (request.dataType && request.dataType.toUpperCase() === 'JSON') {
+            if (request.data_type && request.data_type.toUpperCase() === 'JSON') {
                 request.success(JSON.parse(request.xhr.responseText), request.xhr);
             } else {
                 request.success(request.xhr.responseText, request.xhr);
@@ -77,17 +77,19 @@ exports = module.exports = {
         }
         // Note: for a yet unknown reason, using a purely relative 'proxy/' + ... path
         // revealed to be troublesome when re-submitting a search
-        var dirpath = _.initial(location.href.split('/')).join('/'),
-            proxy_path = dirpath + config.SERVER_PATH_TO_PROXY;
+        var proxy_path = config.SERVER_PATH_TO_PROXY;
+        if (proxy_path[0] === '/') {
+            proxy_path = _.initial(location.href.split('/')).join('/') + proxy_path;
+        }
         return exports.ajax(_.extend(request, {url: proxy_path + request.url}));
     },
     ajax_yql: function (request) { // jshint maxcomplexity: 7
         var orig_success_callback = request.success || request.complete,
-            orig_datatype = request.dataType,
+            orig_datatype = request.data_type,
             orig_url = 'http://' + request.url;
         errors_utils.assert(!orig_datatype || /(html|json)/i.test(orig_datatype), 'Untested dataType', request);
         request.url = 'http' + (/^https/.test(location.protocol) ? 's' : '') + '://query.yahooapis.com/v1/public/yql';
-        request.dataType = 'json';
+        request.data_type = 'json';
         request.data = {
             q: format('select content from data.headers where url="{url}"', {url:
                 orig_url + (request.data ?

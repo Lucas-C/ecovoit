@@ -3,14 +3,6 @@
 var test = require('./tape-enhanced.js'),
     utils = require('../src/utils/vanilla_utils.js');
 
-test('vanilla_utils-pretty_string-Element', function (t) {
-    t.plan(2);
-    var pre_element = document.getElementById('__testling_output');
-    t.equal(pre_element.toString(), '[object HTMLPreElement]');
-    var detailed_string = utils.pretty_string(pre_element);
-    t.equal(detailed_string, '[object HTMLPreElement]');
-});
-
 test('vanilla_utils-pretty_string-Error', function (t) {
     t.plan(3);
     try {
@@ -59,9 +51,9 @@ test('vanilla_utils-pretty_string-blend', function (t) {
         + '    1: true\n'
         + '  },\n'
         + '  e: Error({\n'
-        + '    fileName: "http://localhost:8080/covoiturage-tests-bundle.js",\n'
-        + '    lineNumber: 42,\n'
-        + '    columnNumber: 26,\n'
+        + '    fileName: "ANY",\n'
+        + '    lineNumber: -1,\n'
+        + '    columnNumber: -1,\n'
         + '    stack: null,\n'
         + '    message: "FAIL!"\n'
         + '  }),\n'
@@ -73,5 +65,9 @@ test('vanilla_utils-pretty_string-blend', function (t) {
         + '  x: [object XMLHttpRequest]\n'
         + '}',
         actual_string = utils.pretty_string(obj);
-    t.equal(actual_string, expected_string);
+    t.equal(actual_string
+                .replace(/fileName: ".*"/, 'fileName: "ANY"')
+                .replace(/lineNumber: \d+/, 'lineNumber: -1')
+                .replace(/columnNumber: \d+/, 'columnNumber: -1'),
+            expected_string);
 });

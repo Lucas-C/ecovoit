@@ -54,12 +54,12 @@ exports = module.exports = _.extend({}, base_crawler, {
             return;
         }
         ajax_proxied({
-            type: 'POST',
+            method: 'POST',
             url: exports.CITY_INFO_URL,
             data: {
                 city: query_city_name,
             },
-            dataType: 'JSON',
+            data_type: 'JSON',
             success: function (data) {
                 try {
                     var city_result = exports.parse_city_data(query_city_name, data);
@@ -127,7 +127,7 @@ exports = module.exports = _.extend({}, base_crawler, {
         },
         function query_search_website (cb_chain, user_input, query_params) {
             ajax_proxied({
-                type: 'POST',
+                method: 'POST',
                 url: exports.QUERY_BASE_URL,
                 data: query_params,
                 encoding_function: escape, // latin1 / iso-8859-1 encoding : ç -> %E7 not %C3%A7
