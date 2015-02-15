@@ -8,7 +8,7 @@ test('ajax-to-httpbin-by-proxy', function (t) {
     ajax_utils.ajax_proxied({
         url: 'httpbin.org/get',
         data: {answer:42},
-        dataType: 'JSON',
+        data_type: 'JSON',
         success: function (data) {
             t.equal(data.args.answer, '42');
         },

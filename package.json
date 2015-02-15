@@ -2,7 +2,10 @@
   "name": "ecovoit",
   "version": "1.0.0",
   "description": "a French carpooling search engine",
-  "keywords": ["carpooling", "search"],
+  "keywords": [
+    "carpooling",
+    "search"
+  ],
   "homepage": "http://chezsoi.org/ecovoit",
   "bugs": {
     "url": "http://github.com/Lucas-C/ecovoit/issues",
@@ -11,8 +14,8 @@
   "license": "CC-BY-NC-4.0",
   "author": {
     "name": "Lucas Cimon",
-    "email" : "lucas.cimon@chezsoi.org",
-    "url" : "https://chezsoi.org/lucas/blog"
+    "email": "lucas.cimon@chezsoi.org",
+    "url": "https://chezsoi.org/lucas/blog"
   },
   "main": "main.js",
   "directories": {
@@ -24,14 +27,18 @@
     "url": "http://github.com/Lucas-C/ecovoit"
   },
   "devDependencies": {
-    "browserify": "^8.1.3",
-    "tape": "^3.5.0",
     "bootlint": "^0.10.0",
-    "jshint": "^2.5.6",
+    "browserify": "^8.1.3",
+    "david": "^6.1.4",
+    "jasmine-core": "^2.2.0",
     "jscs": "^1.7.3",
+    "jshint": "^2.5.6",
+    "karma": "^0.12.28",
+    "karma-browserify": "^3.0.0",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-tap": "^1.0.3",
     "madge": "^0.4.1",
-    "david": "^6.1.4"
+    "tape": "^3.5.0"
   },
-  "scripts": {
-  }
+  "scripts": {}
 }

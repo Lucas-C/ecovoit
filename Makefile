@@ -135,8 +135,10 @@ $(ZUUL_TEST_DIR): $(TESTS_BUNDLE)
 
 start-local-server:
 	## Launching a local server to serve HTML files & WSGI apps
-	uwsgi --http :8080 --static-map /=. --touch-reload $(HTML_INDEX) \
-                --manage-script-name --mount /$(PROXY_WSGI)=$(PROXY_WSGI).py --py-autoreload 2 --daemonize uwsgi.log &
+	uwsgi --http :8080 --daemonize uwsgi.log \
+				--static-map /=. --touch-reload $(HTML_INDEX) \
+                --static-map /__zuul=$(ZUUL_VIEWER) --touch-reload $(ZUUL_VIEWER) \
+                --mount /$(PROXY_WSGI)=$(PROXY_WSGI).py --manage-script-name --py-autoreload 2 &
 
 restart-local-server:
 	@pgrep -f '^[^ ]*uwsgi' | ifne xargs kill

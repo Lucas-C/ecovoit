@@ -15,7 +15,7 @@ A French carpooling search engine.
 - [SugarJS](http://sugarjs.com) : for its date parsing module. The file  _sugar-1.4.1\_date\_locale-fr.min.js_ is the 'dev' minimal version of SugarJS Date module + the French locale customized build, minimized using the Clojure compiler.
 
 ### Build dependencies
-make, browserify, madge
+make, browserify, david, madge, piprot, uwsgi
 
 ### Static checking dependencies
 jshint, pylint, jscs, pep8, bootlint, Nu Markup Checker (v.Nu)
