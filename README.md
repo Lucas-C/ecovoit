@@ -111,10 +111,13 @@ Note: currently unit tests include integration tests, that is tests requiring an
 
 This project uses [**SauceLabs**](//saucelabs.com) to run the tests in several browser at once on every push:
 <a href="https://saucelabs.com/u/ecovoit">
-<img alt="Selenium Tests Status" src="https://saucelabs.com/browser-matrix/ecovoit.svg" />
+  <img alt="Selenium Tests Status" src="https://saucelabs.com/buildstatus/ecovoit" />
+</a>
+<a href="https://saucelabs.com/u/ecovoit">
+  <img alt="Selenium Tests Status" src="https://saucelabs.com/browser-matrix/ecovoit.svg" />
 </a>
 
-To run the Selenium tests manually, you'll have to launch a selenium server and run `py.test` :
+To run the Selenium tests manually, you'll have to launch a selenium server and invoke `py.test` :
 
     wget selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
     java -jar selenium-server*.jar

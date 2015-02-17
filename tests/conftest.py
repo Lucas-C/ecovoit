@@ -8,3 +8,4 @@ def pytest_addoption(parser):
                           ' - Default: ' + DEFAULT_WEBSITE)
     parser.addoption('--browser', choices=AVAILABLE_BROWSERS,
                      help='Required if testing locally')
+    parser.addoption('--build-num', default='test')

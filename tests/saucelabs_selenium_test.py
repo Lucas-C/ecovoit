@@ -59,6 +59,7 @@ def tokenize(string):
 def on_platforms(platforms):
     browser = pytest.config.getoption('--browser')
     website_url = pytest.config.getoption('--website-url')
+    build_num = pytest.config.getoption('--build-num')
     is_local_testing = 'localhost' in website_url or '0.0.0.0' in website_url
     if not is_local_testing:
         LOGGER.info('Setting up Sauce client')
@@ -73,6 +74,7 @@ def on_platforms(platforms):
             assert browser
             base_class.WEBDRIVER_PARAMS = {'desired_capabilities': getattr(DesiredCapabilities, browser.upper())}
             base_class.WEBSITE_URL = website_url
+            base_class.build_num = build_num
             return base_class
         module = sys.modules[base_class.__module__].__dict__
         for platform in platforms:
@@ -87,6 +89,7 @@ def on_platforms(platforms):
                 'desired_capabilities': platform,
                 'command_executor': SAUCE_URL.format(**saucelabs_auth),
             }
+            class_attributes['build_num'] = build_num
             class_attributes['sauce'] = sauce
             module[class_name] = new.classobj(class_name, (base_class,), class_attributes)
     return decorator
@@ -113,7 +116,8 @@ class EcovoitTest(unittest.TestCase):
                 LOGGER.info('\nLink to your job: https://saucelabs.com/jobs/%s', job_id)
                 suite_passed = cls.suite_passed()
                 LOGGER.info('Tests passed: %s', suite_passed)
-                cls.sauce.jobs.update_job(job_id, passed=suite_passed)
+                cls.sauce.jobs.update_job(job_id,
+                        passed=suite_passed, build_num=cls.build_num, public='public')
         finally:
             cls.dump_driver_logs()
             cls.driver.quit()
