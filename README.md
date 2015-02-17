@@ -110,8 +110,8 @@ Note: currently unit tests include integration tests, that is tests requiring an
 ### Continuous Integration Status
 
 This project uses [**SauceLabs**](//saucelabs.com) to run the tests in several browser at once on every push:
-<a href="https://saucelabs.com/u/Lucas-C">
-<img alt="Selenium Tests Status" src="https://saucelabs.com/browser-matrix/Lucas-C.svg" />
+<a href="https://saucelabs.com/u/ecovoit">
+<img alt="Selenium Tests Status" src="https://saucelabs.com/browser-matrix/ecovoit.svg" />
 </a>
 
 To run the Selenium tests manually, you'll have to launch a selenium server and run `py.test` :

@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 
 class ColorLogsWrapper(object):
     COLOR_MAP = {
@@ -56,6 +57,7 @@ def tokenize(string):
     return re.sub(r'[^\w]', '_', string)
 
 def on_platforms(platforms):
+    browser = pytest.config.getoption('--browser')
     website_url = pytest.config.getoption('--website-url')
     is_local_testing = 'localhost' in website_url or '0.0.0.0' in website_url
     if not is_local_testing:
@@ -63,12 +65,12 @@ def on_platforms(platforms):
         with open('.saucelabs_auth.json', 'r') as open_file:
             saucelabs_auth = json.load(open_file)
         sauce = SauceClient(saucelabs_auth['username'], saucelabs_auth['accesskey'])
-    browser = pytest.config.getoption('--browser')
-    if browser:
-        platforms = [p for p in platforms if p["browserName"].replace(' ', '') == browser]
+        if browser:
+            platforms = [p for p in platforms if p["browserName"].replace(' ', '') == browser]
 
     def decorator(base_class):
         if is_local_testing:
+            assert browser
             base_class.WEBDRIVER_PARAMS = {'desired_capabilities': getattr(DesiredCapabilities, browser.upper())}
             base_class.WEBSITE_URL = website_url
             return base_class
@@ -77,6 +79,7 @@ def on_platforms(platforms):
             class_name = '%s_%s' % (base_class.__name__, tokenize(platform["browserName"]))
             platform["name"] = class_name
             platform["javascriptEnabled"] = True
+            platform["acceptSslCerts"] = True
             platform["loggingPrefs"] = {log_type: 'ALL' for log_type in LOG_TYPES}
             class_attributes = dict(base_class.__dict__)
             class_attributes['WEBSITE_URL'] = website_url
@@ -93,6 +96,13 @@ class EcovoitTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         LOGGER.info('Setting up Selenium driver')
+        firefox_profile = FirefoxProfile()
+        firefox_profile.set_preference('network.automatic-ntlm-auth.trusted-uris', 'chezsoi.org/ecovoit/index.html')
+        firefox_profile.webdriver_assume_untrusted_issuer = False
+        firefox_profile.webdriver_accept_untrusted_certs = True
+        firefox_profile.update_preferences()
+        # Quoting the docs: "Only used if Firefox is requested"
+        cls.WEBDRIVER_PARAMS['browser_profile'] = firefox_profile
         cls.driver = webdriver.Remote(**cls.WEBDRIVER_PARAMS)
 
     @classmethod
@@ -110,16 +120,12 @@ class EcovoitTest(unittest.TestCase):
 
     @classmethod
     def dump_driver_logs(cls):
-        log_types = cls.driver.log_types  # list when testing locally, dict when using SauceLabs
-        if hasattr(log_types, 'items'):
-            log_types = [k for k, v in log_types.items() if v]
-        log_types = set(list(LOG_TYPES) + log_types)
         full_log = {}
-        for log_type in log_types:
+        for log_type in LOG_TYPES:
             try:
                 full_log[log_type] = cls.driver.get_log(log_type)
             except WebDriverException as error:
-                LOGGER.info(error)
+                LOGGER.info('%s' % error)
                 full_log[log_type] = None
         filename = '%s_driver.json' % cls.__name__
         with open(filename, 'w') as open_file:
