@@ -14,7 +14,7 @@ crawlers_list.AVAILABLE_CRAWLERS.forEach(function(crawler) {
                 date: date_utils.format_date_string(Date.create().beginningOfDay(), '/'),
                 from_place: 'Angers',
                 to_place: 'Nantes',
-                departure_hour_min: '23',
+                departure_hour_min: '6',
             },
             start = Date.now(),
             last_callback = function (callback, crawler, rides) {

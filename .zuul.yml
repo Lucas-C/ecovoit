@@ -1,4 +1,0 @@
-ui: tape
-browsers:
-  - name: firefox
-    version: latest

@@ -21,15 +21,11 @@ test('vanilla_utils-pretty_string-Error', function (t) {
 
 test('vanilla_utils-pretty_string-blend', function (t) {
     t.plan(1);
-    var stackless_error = new Error('FAIL!');
-    stackless_error.stack = null;
-    stackless_error.lineNumber = 42;
     var obj = {
         0: null,
         $: undefined,
         a: [NaN, Infinity, arguments],
         d: {0: false, 1: true},
-        e: stackless_error,
         f: function () { },
         n: 4.2,
         r: /./,
@@ -50,14 +46,7 @@ test('vanilla_utils-pretty_string-blend', function (t) {
         + '    0: false,\n'
         + '    1: true\n'
         + '  },\n'
-        + '  e: Error({\n'
-        + '    fileName: "ANY",\n'
-        + '    lineNumber: -1,\n'
-        + '    columnNumber: -1,\n'
-        + '    stack: null,\n'
-        + '    message: "FAIL!"\n'
-        + '  }),\n'
-        + '  f: function () {\n\"use strict\";\n },\n'
+        + '  f: function () { },\n'
         + '  n: 4.2,\n'
         + '  r: /./,\n'
         + '  s: "string",\n'
@@ -65,9 +54,5 @@ test('vanilla_utils-pretty_string-blend', function (t) {
         + '  x: [object XMLHttpRequest]\n'
         + '}',
         actual_string = utils.pretty_string(obj);
-    t.equal(actual_string
-                .replace(/fileName: ".*"/, 'fileName: "ANY"')
-                .replace(/lineNumber: \d+/, 'lineNumber: -1')
-                .replace(/columnNumber: \d+/, 'columnNumber: -1'),
-            expected_string);
+    t.equal(actual_string.replace(/\n"use strict";\n/, ''), expected_string);
 });

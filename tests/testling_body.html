@@ -1,3 +1,19 @@
-    <pre id=__testling_output></pre>
-    <script type="text/javascript" src="covoiturage-tests-bundle.js" defer></script>
+    <pre id=__testling_output style="height: 24pc; overflow-y: scroll;"></pre>
+    <script type=text/javascript>
+// Script to enforce scrolling down the <pre> as textContent increase
+
+/* Deprecated DOM Level 2 event
+document.getElementById('__testling_output').addEventListener("DOMNodeInserted", function (ev) {
+    this.scrollTop = this.scrollHeight;
+});
+//*/
+
+// http://caniuse.com/#feat=mutationobserver -> not supported: IE<11, Opera, Android<4.4
+var pre = document.getElementById('__testling_output');
+(new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        pre.scrollTop = pre.scrollHeight;
+    });    
+})).observe(pre, { attributes: false, childList: true, characterData: false });
+    </script>    <script type="text/javascript" src="covoiturage-tests-bundle.js" defer></script>
     <script type=text/javascript src=browserified_testling_prelude.js defer></script>

@@ -33,10 +33,6 @@
     "jasmine-core": "^2.2.0",
     "jscs": "^1.7.3",
     "jshint": "^2.5.6",
-    "karma": "^0.12.28",
-    "karma-browserify": "^3.0.0",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-tap": "^1.0.3",
     "madge": "^0.4.1",
     "tape": "^3.5.0"
   },

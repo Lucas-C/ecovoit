@@ -1,4 +1,4 @@
-A French carpooling search engine.
+A web search engine for French carpooling ads.
 
 
 ## Live instance
@@ -99,20 +99,46 @@ For now, I only tested deploying this website with Apache. Once the server is co
 
     make check # => check-static check-style check-html
     make test-proxy # execute the unit tests for the Python proxy
-    make view-js-tests # generate the Javascript unit tests, and open index-tests.html in a browser to execute them
+    make run-testling-tests # generate the Javascript unit tests, and open testling-tests.html in a browser to execute them
 
-To execute Javascript tests selectively, you can pass a regular expression as query string to _index-tests.html_, e.g. :
+To execute Javascript tests selectively, you can pass a regular expression as query string to _testling-tests.html_, e.g. :
 
     http://localhost:8080/index-tests.html?full-blackbox-test
 
-Note: currently unit tests actually include integration tests, that is tests requiring an Internet connexion and effectively querying websites.
+Note: currently unit tests include integration tests, that is tests requiring an Internet connexion and effectively querying websites.
 
 ### Continuous Integration Status
 
-This project uses `testling` to run the tests in several browser at once on every push:
-[![browser support](//ci.testling.com/Lucas-C/ecovoit.png)](//ci.testling.com/Lucas-C/ecovoit)
+This project uses [**SauceLabs**](//saucelabs.com) to run the tests in several browser at once on every push:
+<a href="https://saucelabs.com/u/Lucas-C">
+<img alt="Selenium Tests Status" src="https://saucelabs.com/browser-matrix/Lucas-C.svg" />
+</a>
 
-Issue tracker metrics: [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Average time to resolve an issue") - [![Percentage of issues still open](http://isitmaintained.com/badge/open/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Percentage of issues still open")
+To run the Selenium tests manually, you'll have to launch a selenium server and run `py.test` :
+
+    wget selenium-release.storage.googleapis.com/2.44/selenium-server-standalone-2.44.0.jar
+    java -jar selenium-server*.jar
+    make start-local-server
+    py.test -sv --pdb tests/saucelabs_selenium_test.py --website http://localhost:8080 --browser=chrome
+
+To run only the chrome test remotely on SauceLabs:
+
+    py.test -sv tests/saucelabs_selenium_test.py::EcovoitTest_chrome
+
+The SauceLabs credentials are stored in a JSON file named  _.saucelabs_\auth.json_.
+
+To load them in a shell, you can use the wonderful [`jq`](//stedolan.github.io/jq) :
+
+    source <(jq -r 'to_entries|.[]|"export SAUCE_\(.key|ascii_upcase)=\(.value)"' .saucelabs_auth.json )
+    # defines SAUCE_USERNAME and SAUCE_ACCESS_KEY from .saucelabs_auth.json
+
+### Issue tracker metrics
+
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Average time to resolve an issue") - [![Percentage of issues still open](http://isitmaintained.com/badge/open/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Percentage of issues still open")
+
+### Website availability
+
+<a href="http://www.pingdom.com"><img src="https://share.pingdom.com/banners/a43496c3" alt="Uptime Report for Ecovoit: Last 30 days" title="Uptime Report for Ecovoit: Last 30 days" width="300" height="165" /></a>
 
 
 ## Logo

@@ -123,7 +123,7 @@ def get_request_kwargs(method, content_type, query_string, form, cookies):
         'headers': {
             'User-Agent': USER_AGENT_STRING,
         },
-        'timeout': 10,  # totally empirical value
+        'timeout': 30,  # totally empirical value
         'verify': False,
     }
     if query_string:
