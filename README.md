@@ -144,7 +144,7 @@ To load them in a shell, you can use the wonderful [`jq`](//stedolan.github.io/j
 <a href="http://www.pingdom.com"><img src="https://share.pingdom.com/banners/a43496c3" alt="Uptime Report for Ecovoit: Last 30 days" title="Uptime Report for Ecovoit: Last 30 days" width="300" height="165" /></a>
 
 ### Contribution
-[![Throughput Graph](https://graphs.waffle.io/likeastore/ngDialog/throughput.svg)](https://waffle.io/likeastore/ngDialog/metrics)
+[![Throughput Graph](https://graphs.waffle.io/Lucas-C/ecovoit/throughput.svg)](https://waffle.io/Lucas-C/ecovoit/metrics)
 
 ## Logo
 Credit goes to the amazing [Laetitia Beschus](http://laetitiabeschus.weebly.com) for the artwork.
