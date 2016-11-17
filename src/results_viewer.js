@@ -69,10 +69,9 @@ var dom = require('./utils/dom_shorthands.js'),
             search_links_span.innerHTML = '<a href="' + search_links + '" target="_blank">'
                 + 'Lien pour rechercher directement sur le site</a>';
         } else {
-            search_links_span.innerHTML = 'Liens pour rechercher directement sur le site: '
-                + _.map(search_links, function (href, search_name) {
-                    return '<a href="' + href + '" target="_blank">' + search_name + '</a>';
-                }).join(' - ');
+            search_links_span.innerHTML = _.map(search_links, function (href, search_name) {
+                    return '<a href="' + href + '" target="_blank">' + utils.capitalize(search_name) + '</a>';
+                }).join(' / ') + ' directement sur le site';
         }
     };
 

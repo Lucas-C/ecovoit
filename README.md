@@ -1,5 +1,6 @@
 A web search engine for French carpooling ads.
 
+:warning: This project is currently on hold and not actively maintained.
 
 ## Live instance
 
@@ -84,14 +85,50 @@ Because so much structured information is missing, we use the following algorith
 
 You will need [`npm`](//github.com/npm/npma) and [`pip`](//pip.pypa.io/en/latest/) to install the needed libraries and tools.
 
+Under Cygwin, you'll also need to [`apt-cyg`](//github.com/transcode-open/apt-cyg) `install libcrypt-devel` beforehand.
+
 Then, simply invoke `make install` to install everything from the _requirements.txt_ and _package.json_ files.
 
-### Apache mod_wsgi
+### Server install
 
-For now, I only tested deploying this website with Apache. Once the server is configured with [`mod_wsgi`](//modwsgi.readthedocs.org), just add the following line to its configuration. Assuming you've allowed Apache to serve the other static files in the project directory, it should just work.
+#### Apache mod_wsgi
+
+Once the server is configured with [`mod_wsgi`](//modwsgi.readthedocs.org), just add the following line to its configuration. Assuming you've allowed Apache to serve the other static files in the project directory, it should just work.
 
     WSGIScriptAlias /ecovoit/proxy /var/www/ecovoit/proxy.py
 
+#### Nginx + uwsgi
+
+    location /ecovoit/proxy {
+        include            uwsgi_params;
+        uwsgi_pass         wsgi_proxy;
+    
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+    }
+
+    uwsgi --socket :8080 --daemonize uwsgi.log --static-map /=. --mount /ecovoit/proxy=proxy.py --manage-script-name
+
+##### init script to start uwsgi
+
+    pew new ecovoit -p python2
+    make install
+
+    cat << EOF | sudo tee /etc/init/ecovoit.conf
+    start on startup
+    script
+        set -o errexit -o nounset -o xtrace
+        cd $PWD
+        exec >> upstart-stdout.log
+        exec 2>> upstart-stderr.log
+        date
+        HOME=$HOME pew in ecovoit uwsgi --socket :8080 --static-map /=. --mount /ecovoit/proxy=proxy.py --manage-script-name
+    end script
+    EOF
+    service ecovoit start
 
 ## Tests
 
@@ -128,23 +165,13 @@ To run only the chrome test remotely on SauceLabs:
 
     py.test -sv tests/saucelabs_selenium_test.py::EcovoitTest_chrome
 
-The SauceLabs credentials are stored in a JSON file named  _.saucelabs_\auth.json_.
+The SauceLabs credentials are stored in a JSON file named  _.saucelabs\_auth.json_.
 
 To load them in a shell, you can use the wonderful [`jq`](//stedolan.github.io/jq) :
 
     source <(jq -r 'to_entries|.[]|"export SAUCE_\(.key|ascii_upcase)=\(.value)"' .saucelabs_auth.json )
     # defines SAUCE_USERNAME and SAUCE_ACCESS_KEY from .saucelabs_auth.json
 
-### Issue tracker metrics
-
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Average time to resolve an issue") - [![Percentage of issues still open](http://isitmaintained.com/badge/open/Lucas-C/ecovoit.svg)](http://isitmaintained.com/project/Lucas-C/ecovoit "Percentage of issues still open")
-
-### Website availability
-
-<a href="http://www.pingdom.com"><img src="https://share.pingdom.com/banners/a43496c3" alt="Uptime Report for Ecovoit: Last 30 days" title="Uptime Report for Ecovoit: Last 30 days" width="300" height="165" /></a>
-
-### Contribution
-[![Throughput Graph](https://graphs.waffle.io/Lucas-C/ecovoit/throughput.svg)](https://waffle.io/Lucas-C/ecovoit/metrics)
 
 ## Logo
 Credit goes to the amazing [Laetitia Beschus](http://laetitiabeschus.weebly.com) for the artwork.

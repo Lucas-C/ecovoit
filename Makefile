@@ -1,5 +1,4 @@
 # BEWARE ! Makefiles require the use of hard tabs
-export PATH := $(shell npm bin):$(PATH)
 ZUUL_INSTALL_DIR:= $(shell npm root)/zuul
 
 HTML_INDEX  := index.html
@@ -41,7 +40,7 @@ all: $(OUT_BUNDLE)
 
 $(OUT_BUNDLE): $(SRC_FILES)
 	# Assembling source files into a bundle
-	browserify $(SRC_FILES) -o $(OUT_BUNDLE)
+	npm run browserify src/main.js -o $(OUT_BUNDLE)
 
 view-local: start-local-server open-local-index
 	@:
@@ -54,10 +53,10 @@ deps-graph: $(DEPS_GRAPH).png
 	@:
 
 $(DEPS_GRAPH).png: $(DEPS_GRAPH).json
-	madge --read --image $(DEPS_GRAPH).png < $(DEPS_GRAPH).json
+	npm run madge --read --image $(DEPS_GRAPH).png < $(DEPS_GRAPH).json
 
 $(DEPS_GRAPH).json: $(SRC_FILES)
-	madge --exclude $(DEPS_EXCLUDE) --json $(SRC_DIR) > $(DEPS_GRAPH).json
+	npm run madge --exclude $(DEPS_EXCLUDE) --json $(SRC_DIR) > $(DEPS_GRAPH).json
 
 check: check-static check-style check-html
 	@:
@@ -68,18 +67,18 @@ test-proxy: $(PROXY_TESTS) $(PROXY_WSGI).py
 
 check-static: $(SRC_FILES) $(PROXY_WSGI).py
 	## Running static analysis check on JS & Python code
-	jshint $(SRC_FILES)
+	npm run jshint $(SRC_FILES)
 	pylint -f colorized $(PROXY_WSGI).py
 
 check-style: $(SRC_FILES)
 	## Running code style check on JS & python files
-	jscs $(SRC_FILES)
+	npm run jscs $(SRC_FILES)
 	pep8 $(PROXY_WSGI).py
 
 check-html: $(HTML_INDEX) $(VNU_HTML_CHECKER)
 	## Running HTML conformity check
 	grep -vF 'http-equiv="X-UA-Compatible"' $(HTML_INDEX) | java -jar $(VNU_HTML_CHECKER) -
-	bootlint $(HTML_INDEX)
+	npm run bootlint $(HTML_INDEX)
 
 $(VNU_HTML_CHECKER):
 	### Retrieving vnu.jar from github
@@ -104,12 +103,12 @@ $(TESTLING_VIEWER): $(HTML_INDEX) $(TESTLING_EXTRA_BODY) $(TESTLING_PRELUDE)
 
 $(TESTS_BUNDLE): $(JS_TESTS) $(SRC_FILES)
 	## Generating JS tests bundle
-	browserify $(JS_TESTS) > $(TESTS_BUNDLE)
+	npm run browserify $(JS_TESTS) > $(TESTS_BUNDLE)
 
 $(TESTLING_PRELUDE):
 	## Retrieving \& browserifying testling prelude
 	wget https://raw.githubusercontent.com/substack/testling/master/browser/prelude.js
-	browserify prelude.js > $(TESTLING_PRELUDE)
+	npm run browserify prelude.js > $(TESTLING_PRELUDE)
 	rm prelude.js
 
 run-zuul-tests: start-local-server open-zuul-tests
@@ -128,7 +127,7 @@ $(ZUUL_VIEWER): $(HTML_INDEX) $(ZUUL_EXTRA_HEAD) $(ZUUL_EXTRA_BODY) $(ZUUL_TEST_
 
 $(ZUUL_TEST_DIR): $(TESTS_BUNDLE)
 	mkdir tmp_dir
-	browserify $(ZUUL_INSTALL_DIR)/frameworks/tape/client.js > tmp_dir/client.js
+	npm run browserify $(ZUUL_INSTALL_DIR)/frameworks/tape/client.js > tmp_dir/client.js
 	cp $(ZUUL_INSTALL_DIR)/frameworks/*.css tmp_dir/
 	ln -s $(PWD)/$(TESTS_BUNDLE) tmp_dir/test-bundle.js
 	mv tmp_dir $(ZUUL_TEST_DIR)
@@ -137,8 +136,8 @@ start-local-server:
 	## Launching a local server to serve HTML files & WSGI apps
 	uwsgi --http :8080 --daemonize uwsgi.log \
 				--static-map /=. --touch-reload $(HTML_INDEX) \
-                --static-map /__zuul=$(ZUUL_VIEWER) --touch-reload $(ZUUL_VIEWER) \
                 --mount /$(PROXY_WSGI)=$(PROXY_WSGI).py --manage-script-name --py-autoreload 2 &
+	#            --static-map /__zuul=$(ZUUL_VIEWER) --touch-reload $(ZUUL_VIEWER) \
 
 restart-local-server:
 	@pgrep -f '^[^ ]*uwsgi' | ifne xargs kill
@@ -154,8 +153,8 @@ install:
 	pip install -r requirements.txt
 
 pkg-upgrade-checker:
-	david
-	piprot requirements.txt
+	npm outdated
+	pip list -o
 
 help:
 	# make -n target           # --dry-run : get targets description

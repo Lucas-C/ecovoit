@@ -56,6 +56,9 @@ exports = module.exports = {
         });
         return string;
     },
+    capitalize: function (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    },
     encode_query_params: function (data, encoding_function) {
         encoding_function = encoding_function || encodeURIComponent;
         return _.map(data, function(value, key) {

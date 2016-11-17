@@ -13,6 +13,8 @@ var dom = require('./utils/dom_shorthands.js'),
         results_viewer.init();
         form_header.init(results_viewer);
 
+        bs_alerts.display("CE SITE N'EST ACTUELLEMENT PLUS FONCTIONNEL.<br>Il s'agissait d'un projet expérimental personnel. Contactez-moi si jamais vous trouvez le projet intéressant et souhaitez pouvoir utiliser un tel moteur.", 'alert-danger');
+
         bs_alerts.display(WELCOME_MESSAGE, 'alert-info');
 
         if (/autofill=true/.test(location.search)) {
