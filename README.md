@@ -31,7 +31,7 @@ tape, pytest, WebTest
 
 Once the user has specified the search parameters, AJAX requests are made to the carpooling websites, and the responses are parsed in Javascript to extract the rides information. Because of the [Same-origin policy](//developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy), those AJAX requests are proxied, but all the parsing logic is still done on the client side.
 
-<img src="http://chezsoi.org/ecovoit/doc/diagram_archi_proxy.png" alt="AJAX-through-proxy diagram">
+![AJAX-through-proxy diagram](doc/diagram_archi_proxy.png)
 
 ### Javascript modules
 
